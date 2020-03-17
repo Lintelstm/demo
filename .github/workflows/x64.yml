@@ -1,4 +1,4 @@
-name: x64测试
+name: Openwrtx64
 on: 
   release:
     types: [published]
@@ -44,14 +44,22 @@ jobs:
         sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
     - name: Clone source code
-     # env: 
-      #  REPO_URL: https://github.com/coolsnowwolf/lede
-       # REPO_BRANCH: master
-       # REPO_NAME: openwrt
       run: | 
          git clone --depth 1 $REPO_URL -b $REPO_BRANCH $REPO_NAME
          cd $REPO_NAME/package
          git clone https://github.com/Lienol/openwrt-package Lienol
+    - name: download dl
+      env: 
+       REPO_URL1: https://image.moeclub.org/GoogleDrive/
+       REPO_URL2: 1VZHn2AJ3iXpJAYsDwWAPL6m_CjMAovsb
+       REPO_NAMES: dl.tar.gz
+      run: | 
+        cd $REPO_NAME
+        wget  $REPO_URL1/$REPO_URL2
+        mv  $REPO_URL2 $REPO_NAMES
+        tar -xzvf $REPO_NAMES
+        sudo rm -rf $REPO_NAMES
+        sed -i 's/192.168.1.1/192.168.0.100/g' package/base-files/files/bin/config_generate     
     - name: Update & Install feeds
       run: |
         cd $REPO_NAME 
@@ -59,12 +67,12 @@ jobs:
         ./scripts/feeds install -a
     - name: Configuration Customization - Build_x64
       run: |
-        [ -e files ] && mv files openwrt/files
+       # [ -e files ] && mv files openwrt/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE $REPO_NAME/.config
-        chmod +x $DIY_SH
-        cd $REPO_NAME
-        ../$DIY_SH
-        make defconfig  
+       # chmod +x $DIY_SH
+        #cd $REPO_NAME
+       # ../$DIY_SH
+       # make defconfig  
     - name: Download package
       working-directory: ./openwrt
       run: |
