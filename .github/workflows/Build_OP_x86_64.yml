@@ -72,7 +72,8 @@ jobs:
        # chmod +x $DIY_SH
         #cd $REPO_NAME
        # ../$DIY_SH
-       # make defconfig  
+       # make defconfig 
+       cd openwrt && make defconfig
      #- name: Download package
       #working-directory: ./openwrt
       #run: |
